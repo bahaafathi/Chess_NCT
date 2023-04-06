@@ -1,64 +1,58 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/horse_movement_cubit.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-import '../bloc/chess_cubit.dart';
+import '../bloc/horse_active_cubit.dart';
 
-class ChessForm extends StatefulWidget {
-  const ChessForm({super.key});
-
-  @override
-  State<ChessForm> createState() => _ChessFormState();
-}
-
-class _ChessFormState extends State<ChessForm> {
+class ChessForm extends StatelessWidget {
+  ChessForm({super.key});
   final player = AudioPlayer();
-
-  bool active = false;
 
   @override
   Widget build(BuildContext context) {
+    bool active = context.watch<HorseActiveCubit>().state;
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    return BlocBuilder<ChessCubit, List<List<int>>>(
+    return BlocBuilder<HorseMovementCubit, List<List<int>>>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.blue,
           body: Column(
             children: [
               const Spacer(),
               ...List.generate(
-                  //TODO: remove this magic number
+                  // Create 8 rows
                   8,
-                  //TODO: separate this widget
-                  (x) => Row(
+                  (y) => Row(
                         children: [
                           ...List.generate(
+                              // Create 8 Column
                               8,
-                              (y) => InkWell(
+                              (x) => InkWell(
                                     onTap: () {
-                                      if (state[x][y] == 0) {
-                                        //TODO: remove setState and use Bloc insted
-                                        setState(() {
-                                          active = true;
-                                        });
-                                      } else if (state[x][y] == 1 && active) {
+                                      if (state[y][x] == 0) {
+                                        context
+                                            .read<HorseActiveCubit>()
+                                            .changeActiveMode();
+                                      } else if (state[y][x] == 1 && active) {
                                         player.play(AssetSource('sound.mp3'));
-                                        setState(() {
-                                          active = false;
-                                        });
-                                        context.read<ChessCubit>().move(y, x);
+                                        context
+                                            .read<HorseActiveCubit>()
+                                            .changeActiveMode();
+                                        context
+                                            .read<HorseMovementCubit>()
+                                            .move(x, y);
                                       }
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
                                           color: buildcolor(x, y),
-                                          border: state[x][y] == 1 && active
+                                          border: state[y][x] == 1 && active
                                               ? Border.all(
                                                   color: Colors.red,
                                                   width: 5,
                                                 )
                                               : null),
-                                      //TODO: again a lot of magic numbers
                                       width: isPortrait
                                           ? MediaQuery.of(context).size.width /
                                               8
@@ -69,7 +63,7 @@ class _ChessFormState extends State<ChessForm> {
                                               8
                                           : MediaQuery.of(context).size.height /
                                               10,
-                                      child: state[x][y] == 0
+                                      child: state[y][x] == 0
                                           ? Center(
                                               child: Image.asset(
                                                 'assets/horse.png',
