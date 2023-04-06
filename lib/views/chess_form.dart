@@ -1,7 +1,8 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../bloc/chess_cubit.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 class ChessForm extends StatefulWidget {
   const ChessForm({super.key});
@@ -14,18 +15,21 @@ class _ChessFormState extends State<ChessForm> {
   final player = AudioPlayer();
 
   bool active = false;
+
   @override
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return BlocBuilder<ChessCubit, List<List<int>>>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.black,
           body: Column(
             children: [
               const Spacer(),
               ...List.generate(
+                  //TODO: remove this magic number
                   8,
+                  //TODO: separate this widget
                   (x) => Row(
                         children: [
                           ...List.generate(
@@ -33,6 +37,7 @@ class _ChessFormState extends State<ChessForm> {
                               (y) => InkWell(
                                     onTap: () {
                                       if (state[x][y] == 0) {
+                                        //TODO: remove setState and use Bloc insted
                                         setState(() {
                                           active = true;
                                         });
@@ -53,6 +58,7 @@ class _ChessFormState extends State<ChessForm> {
                                                   width: 5,
                                                 )
                                               : null),
+                                      //TODO: again a lot of magic numbers
                                       width: isPortrait
                                           ? MediaQuery.of(context).size.width /
                                               8
