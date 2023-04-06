@@ -21,10 +21,12 @@ class ChessForm extends StatelessWidget {
             children: [
               const Spacer(),
               ...List.generate(
+                  // Create 8 rows
                   8,
                   (y) => Row(
                         children: [
                           ...List.generate(
+                              // Create 8 Column
                               8,
                               (x) => InkWell(
                                     onTap: () {

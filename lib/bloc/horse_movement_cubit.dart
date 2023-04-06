@@ -41,41 +41,41 @@ class HorseMovementCubit extends Cubit<List<List<int>>> {
     int expectedY;
     expectedX = x - 1;
     expectedY = y - 2;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     expectedX = x + 1;
     expectedY = y - 2;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     expectedX = x + 2;
     expectedY = y - 1;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     expectedX = x - 2;
     expectedY = y - 1;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     expectedX = x - 2;
     expectedY = y + 1;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     expectedX = x - 1;
     expectedY = y + 2;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     expectedX = x + 1;
     expectedY = y + 2;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     expectedX = x + 2;
     expectedY = y + 1;
-    checkIsValid(expectedX, expectedY);
+    checkIsValidTOAdd(expectedX, expectedY);
 
     emit(bord);
   }
 
   /// Check if expected X and expected Y  are valid(They are not out of bord) to put them in pointsExpected and bord
-  void checkIsValid(int expectedX, int expectedY) {
+  void checkIsValidTOAdd(int expectedX, int expectedY) {
     if (expectedX > -1 && expectedX < 8 && expectedY > -1 && expectedY < 8) {
       pointsExpected.add([expectedY, expectedX]);
       bord[expectedY][expectedX] = 1;
