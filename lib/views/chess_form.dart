@@ -22,30 +22,30 @@ class ChessForm extends StatelessWidget {
               const Spacer(),
               ...List.generate(
                   8,
-                  (x) => Row(
+                  (y) => Row(
                         children: [
                           ...List.generate(
                               8,
-                              (y) => InkWell(
+                              (x) => InkWell(
                                     onTap: () {
-                                      if (state[x][y] == 0) {
+                                      if (state[y][x] == 0) {
                                         context
                                             .read<HorseActiveCubit>()
                                             .changeActiveMode();
-                                      } else if (state[x][y] == 1 && active) {
+                                      } else if (state[y][x] == 1 && active) {
                                         player.play(AssetSource('sound.mp3'));
                                         context
                                             .read<HorseActiveCubit>()
                                             .changeActiveMode();
                                         context
                                             .read<HorseMovementCubit>()
-                                            .move(y, x);
+                                            .move(x, y);
                                       }
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
                                           color: buildcolor(x, y),
-                                          border: state[x][y] == 1 && active
+                                          border: state[y][x] == 1 && active
                                               ? Border.all(
                                                   color: Colors.red,
                                                   width: 5,
@@ -61,7 +61,7 @@ class ChessForm extends StatelessWidget {
                                               8
                                           : MediaQuery.of(context).size.height /
                                               10,
-                                      child: state[x][y] == 0
+                                      child: state[y][x] == 0
                                           ? Center(
                                               child: Image.asset(
                                                 'assets/horse.png',

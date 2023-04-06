@@ -13,7 +13,7 @@ class ChessPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => HorseMovementCubit()..move(0, 0),
+          create: (context) => HorseMovementCubit()..move(3, 4),
         ),
         BlocProvider(
           create: (context) => HorseActiveCubit(),
