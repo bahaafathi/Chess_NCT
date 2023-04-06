@@ -1,35 +1,27 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/horse_movement_cubit.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-import '../bloc/chess_cubit.dart';
+import '../bloc/horse_active_cubit.dart';
 
-class ChessForm extends StatefulWidget {
-  const ChessForm({super.key});
-
-  @override
-  State<ChessForm> createState() => _ChessFormState();
-}
-
-class _ChessFormState extends State<ChessForm> {
+class ChessForm extends StatelessWidget {
+  ChessForm({super.key});
   final player = AudioPlayer();
-
-  bool active = false;
 
   @override
   Widget build(BuildContext context) {
+    bool active = context.watch<HorseActiveCubit>().state;
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    return BlocBuilder<ChessCubit, List<List<int>>>(
+    return BlocBuilder<HorseMovementCubit, List<List<int>>>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.blue,
           body: Column(
             children: [
               const Spacer(),
               ...List.generate(
-                  //TODO: remove this magic number
                   8,
-                  //TODO: separate this widget
                   (x) => Row(
                         children: [
                           ...List.generate(
@@ -37,16 +29,17 @@ class _ChessFormState extends State<ChessForm> {
                               (y) => InkWell(
                                     onTap: () {
                                       if (state[x][y] == 0) {
-                                        //TODO: remove setState and use Bloc insted
-                                        setState(() {
-                                          active = true;
-                                        });
+                                        context
+                                            .read<HorseActiveCubit>()
+                                            .changeActiveMode();
                                       } else if (state[x][y] == 1 && active) {
                                         player.play(AssetSource('sound.mp3'));
-                                        setState(() {
-                                          active = false;
-                                        });
-                                        context.read<ChessCubit>().move(y, x);
+                                        context
+                                            .read<HorseActiveCubit>()
+                                            .changeActiveMode();
+                                        context
+                                            .read<HorseMovementCubit>()
+                                            .move(y, x);
                                       }
                                     },
                                     child: Container(
@@ -58,7 +51,6 @@ class _ChessFormState extends State<ChessForm> {
                                                   width: 5,
                                                 )
                                               : null),
-                                      //TODO: again a lot of magic numbers
                                       width: isPortrait
                                           ? MediaQuery.of(context).size.width /
                                               8
