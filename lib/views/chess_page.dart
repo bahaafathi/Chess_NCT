@@ -1,8 +1,8 @@
+import 'package:chess/bloc/board_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/horse_movement_cubit.dart';
-import '../bloc/horse_active_cubit.dart';
+import '../bloc/horse_expected_points_cubit.dart';
 import 'chess_form.dart';
 
 class ChessPage extends StatelessWidget {
@@ -13,10 +13,10 @@ class ChessPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => HorseMovementCubit()..move(3, 4),
+          create: (context) => HorseExpectedPointsCubit(),
         ),
         BlocProvider(
-          create: (context) => HorseActiveCubit(),
+          create: (context) => BoardCubit(),
         )
       ],
       child: ChessForm(),
