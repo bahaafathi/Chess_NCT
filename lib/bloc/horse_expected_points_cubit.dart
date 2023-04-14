@@ -13,7 +13,7 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
           [-1, -1, -1, -1, -1, -1, -1, -1],
         ]);
 
-  static const Map<String, int> priorityboard = {
+  Map<String, int> priorityboard = {
     'bQ': 1,
     'bK': 2,
     'bR': 3,

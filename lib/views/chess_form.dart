@@ -49,11 +49,8 @@ class ChessForm extends StatelessWidget {
                                           .read<HorseExpectedPointsCubit>()
                                           .displayExpectedPoints(
                                               x, y, boardState);
-                                    } else if (HorseExpectedPointsCubit
-                                            .priorityboard
-                                            .containsValue(
-                                                stateExpectedPoints[y][x]) ||
-                                        stateExpectedPoints[y][x] == 0) {
+                                    } else if (stateExpectedPoints[y][x] !=
+                                        -1) {
                                       context
                                           .read<HorseExpectedPointsCubit>()
                                           .reset();
@@ -77,7 +74,7 @@ class ChessForm extends StatelessWidget {
                                                         0
                                                     ? Colors.red
                                                     : Colors.blue,
-                                                width: 10 -
+                                                width: 9 -
                                                     stateExpectedPoints[y][x]
                                                         .toDouble(),
                                               )
