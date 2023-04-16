@@ -1,88 +1,134 @@
-import 'package:audioplayers/audioplayers.dart';
+import 'package:chess/bloc/board_cubit.dart';
+import 'package:chess/resources/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/horse_expected_points_cubit.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-import '../bloc/chess_cubit.dart';
-
-class ChessForm extends StatefulWidget {
-  const ChessForm({super.key});
-
-  @override
-  State<ChessForm> createState() => _ChessFormState();
-}
-
-class _ChessFormState extends State<ChessForm> {
+class ChessForm extends StatelessWidget {
+  ChessForm({super.key});
   final player = AudioPlayer();
-
-  bool active = false;
 
   @override
   Widget build(BuildContext context) {
+    int preX = -1;
+    int prey = -1;
+
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    return BlocBuilder<ChessCubit, List<List<int>>>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: Column(
-            children: [
-              const Spacer(),
-              ...List.generate(
-                  //TODO: remove this magic number
-                  8,
-                  //TODO: separate this widget
-                  (x) => Row(
-                        children: [
-                          ...List.generate(
-                              8,
-                              (y) => InkWell(
-                                    onTap: () {
-                                      if (state[x][y] == 0) {
-                                        //TODO: remove setState and use Bloc insted
-                                        setState(() {
-                                          active = true;
-                                        });
-                                      } else if (state[x][y] == 1 && active) {
-                                        player.play(AssetSource('sound.mp3'));
-                                        setState(() {
-                                          active = false;
-                                        });
-                                        context.read<ChessCubit>().move(y, x);
-                                      }
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: buildcolor(x, y),
-                                          border: state[x][y] == 1 && active
-                                              ? Border.all(
-                                                  color: Colors.red,
-                                                  width: 5,
-                                                )
-                                              : null),
-                                      //TODO: again a lot of magic numbers
-                                      width: isPortrait
-                                          ? MediaQuery.of(context).size.width /
-                                              8
-                                          : MediaQuery.of(context).size.height /
-                                              10,
-                                      height: isPortrait
-                                          ? MediaQuery.of(context).size.width /
-                                              8
-                                          : MediaQuery.of(context).size.height /
-                                              10,
-                                      child: state[x][y] == 0
-                                          ? Center(
-                                              child: Image.asset(
-                                                'assets/horse.png',
-                                              ),
-                                            )
-                                          : null,
+    return BlocBuilder<BoardCubit, List<List<String>>>(
+      builder: (context, boardState) {
+        return BlocBuilder<HorseExpectedPointsCubit, List<List<int>>>(
+          builder: (context, stateExpectedPoints) {
+            return Scaffold(
+              backgroundColor: Colors.blue,
+              body: Column(
+                children: [
+                  const Spacer(),
+                  ...List.generate(
+                      // Create 8 rows
+                      8,
+                      (y) => Row(
+                            children: [
+                              ...List.generate(
+                                // Create 8 Column
+                                8,
+                                (x) => InkWell(
+                                  onTap: () {
+                                    if (x == preX && y == prey) {
+                                      preX = -1;
+                                      prey = -1;
+                                      context
+                                          .read<HorseExpectedPointsCubit>()
+                                          .reset();
+                                      return;
+                                    }
+                                    if (boardState[y][x] == 'wN') {
+                                      preX = x;
+                                      prey = y;
+                                      context
+                                          .read<HorseExpectedPointsCubit>()
+                                          .displayExpectedPoints(
+                                              x, y, boardState);
+                                    } else if (stateExpectedPoints[y][x] !=
+                                        -1) {
+                                      context
+                                          .read<HorseExpectedPointsCubit>()
+                                          .reset();
+
+                                      context.read<BoardCubit>().move(
+                                          fromX: preX,
+                                          fromY: prey,
+                                          toX: x,
+                                          toy: y,
+                                          board: boardState);
+                                      player.play(AssetSource('sound.mp3'));
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: buildcolor(x, y),
+                                        border: stateExpectedPoints[y][x] != -1
+                                            ? Border.all(
+                                                color: stateExpectedPoints[y]
+                                                            [x] ==
+                                                        0
+                                                    ? Colors.red
+                                                    : Colors.blue,
+                                                width: 9 -
+                                                    stateExpectedPoints[y][x]
+                                                        .toDouble(),
+                                              )
+                                            : null),
+                                    width: isPortrait
+                                        ? MediaQuery.of(context).size.width / 8
+                                        : MediaQuery.of(context).size.height /
+                                            10,
+                                    height: isPortrait
+                                        ? MediaQuery.of(context).size.width / 8
+                                        : MediaQuery.of(context).size.height /
+                                            10,
+                                    child: Center(
+                                      child: (() {
+                                        switch (boardState[y][x]) {
+                                          case 'bB':
+                                            return Image.asset(AppImages.bB);
+                                          case 'bK':
+                                            return Image.asset(AppImages.bK);
+                                          case 'bN':
+                                            return Image.asset(AppImages.bN);
+                                          case 'bP':
+                                            return Image.asset(AppImages.bP);
+                                          case 'bQ':
+                                            return Image.asset(AppImages.bQ);
+                                          case 'bR':
+                                            return Image.asset(AppImages.bR);
+                                          case 'wB':
+                                            return Image.asset(AppImages.wB);
+                                          case 'wK':
+                                            return Image.asset(AppImages.wK);
+                                          case 'wN':
+                                            return Image.asset(AppImages.wN);
+                                          case 'wP':
+                                            return Image.asset(AppImages.wP);
+                                          case 'wQ':
+                                            return Image.asset(AppImages.wQ);
+                                          case 'wR':
+                                            return Image.asset(AppImages.wR);
+                                          default:
+                                            return null;
+                                        }
+                                      })(),
                                     ),
-                                  ))
-                        ],
-                      )),
-              const Spacer(),
-            ],
-          ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )),
+                  const Spacer(),
+                ],
+              ),
+            );
+          },
         );
       },
     );
