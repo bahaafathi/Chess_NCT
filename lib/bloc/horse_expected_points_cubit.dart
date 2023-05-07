@@ -56,9 +56,8 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
       int expectedX = x + xPoints[i];
       String possiblePointPiece = board[yPoints[i]][xPoints[i]];
       if (checkIsValidTOAdd(expectedX, expectedY, possiblePointPiece)) {
-        boardExpected[expectedY][expectedX] =
-            priorityboard[possiblePointPiece]!;
         int priorityPoint = priorityboard[possiblePointPiece]!;
+        boardExpected[expectedY][expectedX] = priorityPoint;
         maximumPriority(priorityPoint, expectedY, expectedX);
       }
     }
