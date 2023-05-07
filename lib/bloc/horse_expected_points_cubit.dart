@@ -23,6 +23,9 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
     'em': 6
   };
 
+  int maxPriority = double.maxFinite.toInt();
+  late List pointMaxPriority;
+
   // We initialize All points in  board Expected = -1
   List<List<int>> boardExpected = [
     [-1, -1, -1, -1, -1, -1, -1, -1],
@@ -38,6 +41,9 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
   //  -1  refers to  is not expected points
   //  else  refers the expected points And its priority
 
+  List<int> xPoints = [2, 1, -1, -2, -2, -1, 1, 2];
+  List<int> yPoints = [1, 2, 2, 1, -1, -2, -2, -1];
+
   void displayExpectedPoints(int x, int y, List<List<String>> board) {
     // Clear all the points horse expected old in board to  -1
     reset();
@@ -45,39 +51,16 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
     // The maximum number of possibilities to move the horse are 8
     // The position of the horse (increases or decreases) for both (X or Y axes) (2 or 1)
     // condition The rate of (increase or decrease) in both (X or Y axes) is not equal
-    int expectedX;
-    int expectedY;
-    expectedX = x - 1;
-    expectedY = y - 2;
-    checkIsValidTOAdd(expectedX, expectedY, board);
-
-    expectedX = x + 1;
-    expectedY = y - 2;
-    checkIsValidTOAdd(expectedX, expectedY, board);
-
-    expectedX = x + 2;
-    expectedY = y - 1;
-    checkIsValidTOAdd(expectedX, expectedY, board);
-
-    expectedX = x - 2;
-    expectedY = y - 1;
-    checkIsValidTOAdd(expectedX, expectedY, board);
-
-    expectedX = x - 2;
-    expectedY = y + 1;
-    checkIsValidTOAdd(expectedX, expectedY, board);
-
-    expectedX = x - 1;
-    expectedY = y + 2;
-    checkIsValidTOAdd(expectedX, expectedY, board);
-
-    expectedX = x + 1;
-    expectedY = y + 2;
-    checkIsValidTOAdd(expectedX, expectedY, board);
-
-    expectedX = x + 2;
-    expectedY = y + 1;
-    checkIsValidTOAdd(expectedX, expectedY, board);
+    for (int i = 0; i < 8; i++) {
+      int expectedY = y + yPoints[i];
+      int expectedX = x + xPoints[i];
+      String newExpectedPoint = board[yPoints[i]][xPoints[i]];
+      if (checkIsValidTOAdd(expectedX, expectedY, newExpectedPoint)) {
+        boardExpected[expectedY][expectedX] = priorityboard[newExpectedPoint]!;
+        int priorityPoint = priorityboard[newExpectedPoint]!;
+        maximumPriority(priorityPoint, expectedY, expectedX);
+      }
+    }
 
     if (pointMaxPriority.isNotEmpty) {
       boardExpected[pointMaxPriority[0]][pointMaxPriority[1]] = 0;
@@ -85,6 +68,13 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
     pointMaxPriority.clear();
     maxPriority = double.maxFinite.toInt();
     emit(boardExpected);
+  }
+
+  void maximumPriority(int priorityPoint, int expectedY, int expectedX) {
+    if (priorityPoint < maxPriority && priorityPoint != 6) {
+      maxPriority = priorityPoint;
+      pointMaxPriority = [expectedY, expectedX];
+    }
   }
 
   void reset() {
@@ -101,24 +91,16 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
     emit(boardExpected);
   }
 
-  int maxPriority = double.maxFinite.toInt();
-  late List pointMaxPriority;
-
   /// Check if expected X and expected Y  are valid(They are not out of board) to put them in   board
-  void checkIsValidTOAdd(
-      int expectedX, int expectedY, List<List<String>> board) {
+  bool checkIsValidTOAdd(
+      int expectedX, int expectedY, String newExpectedPoint) {
     if (expectedX > -1 &&
         expectedX < 8 &&
         expectedY > -1 &&
         expectedY < 8 &&
-        priorityboard.containsKey(board[expectedY][expectedX])) {
-      boardExpected[expectedY][expectedX] =
-          priorityboard[board[expectedY][expectedX]]!;
-      if (priorityboard[board[expectedY][expectedX]]! < maxPriority &&
-          priorityboard[board[expectedY][expectedX]]! != 6) {
-        maxPriority = priorityboard[board[expectedY][expectedX]]!;
-        pointMaxPriority = [expectedY, expectedX];
-      }
+        priorityboard.containsKey(newExpectedPoint)) {
+      return true;
     }
+    return false;
   }
 }
