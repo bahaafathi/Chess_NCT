@@ -65,8 +65,9 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
 
     if (pointMaxPriority.isNotEmpty) {
       boardExpected[pointMaxPriority[0]][pointMaxPriority[1]] = 0;
+      pointMaxPriority.clear();
     }
-    pointMaxPriority.clear();
+
     maxPriority = double.maxFinite.toInt();
     emit(boardExpected);
   }
