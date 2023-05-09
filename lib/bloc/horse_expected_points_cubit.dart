@@ -54,8 +54,9 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
     for (int i = 0; i < 8; i++) {
       int expectedY = y + yPoints[i];
       int expectedX = x + xPoints[i];
-      String possiblePointPiece = board[yPoints[i]][xPoints[i]];
-      if (checkIsValidTOAdd(expectedX, expectedY, possiblePointPiece)) {
+      if (checkIsValidTOAdd(expectedX, expectedY, board)) {
+        String possiblePointPiece = board[expectedY][expectedX];
+
         int priorityPoint = priorityboard[possiblePointPiece]!;
         boardExpected[expectedY][expectedX] = priorityPoint;
         maximumPriority(priorityPoint, expectedY, expectedX);
@@ -93,12 +94,12 @@ class HorseExpectedPointsCubit extends Cubit<List<List<int>>> {
 
   /// Check if expected X and expected Y  are valid(They are not out of board) to put them in   board
   bool checkIsValidTOAdd(
-      int expectedX, int expectedY, String newExpectedPoint) {
+      int expectedX, int expectedY, List<List<String>> board) {
     if (expectedX > -1 &&
         expectedX < 8 &&
         expectedY > -1 &&
         expectedY < 8 &&
-        priorityboard.containsKey(newExpectedPoint)) {
+        priorityboard.containsKey(board[expectedY][expectedX])) {
       return true;
     }
     return false;
